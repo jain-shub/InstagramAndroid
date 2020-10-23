@@ -1,7 +1,9 @@
 package com.android.instagram;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.FileProvider;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,15 +31,16 @@ import com.parse.SaveCallback;
 import java.io.File;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     public static final String TAG = "MainActivity";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;
 
     EditText etDescription;
-    Button btnTakePhoto;
+//    Button btnTakePhoto;
     Button btnUpload;
     ImageView ivPhoto;
+    ImageView ivAdd;
     private File photoFile;
     public String photoFileName = "pic.jpg";
 
@@ -44,16 +49,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         etDescription = findViewById(R.id.etDescription);
-        btnTakePhoto = findViewById(R.id.btnTakePhoto);
+//        btnTakePhoto = findViewById(R.id.btnTakePhoto);
         btnUpload = findViewById(R.id.btnUpload);
         ivPhoto = findViewById(R.id.ivPhoto);
+        ivAdd = findViewById(R.id.ivAdd);
 
-        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+        ivAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCamera();
+                PopupMenu popup = new PopupMenu(MainActivity.this, v);
+                popup.setOnMenuItemClickListener(MainActivity.this);
+                popup.inflate(R.menu.addmenu);
+                popup.show();
             }
         });
+
+//        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                launchCamera();
+//            }
+//        });
+
 
 //        queryPost();
         btnUpload.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +91,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    public void showPopup(View v) {
+//        PopupMenu popup = new PopupMenu(this, v);
+//        MenuInflater inflater = popup.getMenuInflater();
+//        inflater.inflate(R.menu.addmenu, popup.getMenu());
+//        popup.show();
+//    }
 
     private void launchCamera() {
         // create Intent to take a picture and return control to the calling application
@@ -167,5 +191,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        Toast.makeText(this, "Selected Item: " +item.getTitle(), Toast.LENGTH_SHORT).show();
+        launchCamera();
+        return true;
     }
 }
